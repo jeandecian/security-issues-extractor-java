@@ -57,7 +57,7 @@ def filterSort(file, columns, filters, mergeTableColumns):
     writeBuffer = []
     outFile = file.replace(".", "")
     outFile = outFile.replace("-", "")
-    sql.save(outFile, mergeTableColumns, fields, contents)
+    # sql.save(outFile, mergeTableColumns, fields, contents)
     
     for row in contents:
         html = row[fields.index("html")]
