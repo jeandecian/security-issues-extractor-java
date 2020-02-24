@@ -1,20 +1,17 @@
 # github.py
 # Written by Jean Decian - Centre de Recherche Informatique de Montreal (CRIM)
 # Creation date : 2019/05/27
-# Last modified : 2019/06/26
+# Last modified : 2020/02/24
 
 import csv
 import time
 
+import constant as c
 import csvManager
 import display as disp
 import requests as req
 import search
 import sqlConnect as sql
-
-G_EXPORT = "github_export"
-G_MERGE = "github_merge"
-G_OUT = "github_out"
 
 def increaseSizeLimit():
     csvManager.increaseSizeLimit()
@@ -52,7 +49,7 @@ def merge(pathIn, pathOut, file, category, count):
 
 def filterSort(file, columns, filters, mergeTableColumns):
     # filter the merge github file and sort
-    fields, contents = csvManager.read(csvManager.getPath([G_MERGE, file]))
+    fields, contents = csvManager.read(csvManager.getPath([c.OUTPUT_FILES, file]))
     fields[fields.index("id")] = "issueKey"
     writeBuffer = []
     outFile = file.replace(".", "")
@@ -84,8 +81,8 @@ def filterSort(file, columns, filters, mergeTableColumns):
                     
                 writeBuffer.append(rowBuffer)
 
-    outFile = outFile.replace("merge_", "sort_")
-    pathOut = [G_OUT, outFile]
+    outFile = outFile.replace("merge_", "out_")
+    pathOut = [c.OUTPUT_FILES, outFile]
     csvManager.save(csvManager.getPath(pathOut), columns, writeBuffer)
 
     return outFile, writeBuffer
