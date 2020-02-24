@@ -16,4 +16,5 @@ git ls-files | grep ".*\.java$" | xargs wc -l
 
 ## GitHub Extraction
 
-Use the script `script > githubExtraction.js`
+- Run the script `script > githubExtraction.js` until all pages have been exported
+- Put all csv files inside `github_export` folder
