@@ -13,8 +13,10 @@ import requests as req
 import search
 import sqlConnect as sql
 
+
 def increaseSizeLimit():
     csvManager.increaseSizeLimit()
+
 
 def merge(pathIn, pathOut, file, category, count):
     # merge all github files from same repo into one + add the html code
@@ -30,10 +32,10 @@ def merge(pathIn, pathOut, file, category, count):
         path = pathIn.copy()
         path.append(processFile + "_" + str(i + 1) + ".csv")
         fields, contents = csvManager.read(csvManager.getPath(path))
-            
+
         for row in contents:
             disp.loading(".")
-            if ((row[fields.index("id")] not in unique) and (len(row) == len(fields))):
+            if (row[fields.index("id")] not in unique) and (len(row) == len(fields)):
                 unique.append(row[fields.index("id")])
                 row.append(req.getWebsiteHtml(row[fields.index("link")]))
                 writeBuffer.append(row)
@@ -42,10 +44,19 @@ def merge(pathIn, pathOut, file, category, count):
         print(" " + str(diffTime))
         totalTime += diffTime
 
-    print("\n[GIT] \tProcessing " + processFile + " took in total " + str(round(totalTime, 2)) + "s (" + str(len(writeBuffer)) + ")")
+    print(
+        "\n[GIT] \tProcessing "
+        + processFile
+        + " took in total "
+        + str(round(totalTime, 2))
+        + "s ("
+        + str(len(writeBuffer))
+        + ")"
+    )
     pathOut.append("merge_" + processFile)
     fields.append("html")
     csvManager.save(csvManager.getPath(pathOut), fields, writeBuffer)
+
 
 def filterSort(file, columns, filters, mergeTableColumns):
     # filter the merge github file and sort
@@ -55,21 +66,25 @@ def filterSort(file, columns, filters, mergeTableColumns):
     outFile = file.replace(".", "")
     outFile = outFile.replace("-", "")
     # sql.save(outFile, mergeTableColumns, fields, contents)
-    
+
     for row in contents:
         html = row[fields.index("html")]
 
         # check if html contains some key word related to security
-        security = "1" if search.contains(html, filters) and search.contains(html, "bug") else 0
+        security = (
+            "1"
+            if search.contains(html, filters) and search.contains(html, "bug")
+            else 0
+        )
 
         # retrive every files that match .java file
         # add ":" after because sometimes, it has the line after
         files = search.handleExtraction(html, "()", ".java:")
-        
-        if (files):
+
+        if files:
             date = search.extractElement("relative-time", html, "/relative-time")
-            date = search.extractElement("\"", date, "T")
-                
+            date = search.extractElement('"', date, "T")
+
             for f in files:
                 rowBuffer = []
                 fl = f.split(":")
@@ -78,7 +93,7 @@ def filterSort(file, columns, filters, mergeTableColumns):
                 rowBuffer.append(row[fields.index("link")])
                 rowBuffer.append(date)
                 rowBuffer.append(security)
-                    
+
                 writeBuffer.append(rowBuffer)
 
     outFile = outFile.replace("merge_", "out_")
