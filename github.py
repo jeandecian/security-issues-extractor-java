@@ -14,58 +14,58 @@ import search
 import sqlConnect as sql
 
 
-def increaseSizeLimit():
-    csvManager.increaseSizeLimit()
+def increase_size_limit():
+    csvManager.increase_size_limit()
 
 
-def merge(pathIn, pathOut, file, category, count):
+def merge(path_in, path_out, file, category, count):
     # merge all github files from same repo into one + add the html code
-    processFile = file + "_" + category
+    process_file = file + "_" + category
     fields = []
     unique = []
-    writeBuffer = []
-    totalTime = 0
+    write_buffer = []
+    total_time = 0
 
     for i in range(count):
-        startTime = time.time()
-        disp.processingFile(processFile, i + 1, count)
-        path = pathIn.copy()
-        path.append(processFile + "_" + str(i + 1) + ".csv")
-        fields, contents = csvManager.read(csvManager.getPath(path))
+        start_time = time.time()
+        disp.processingFile(process_file, i + 1, count)
+        path = path_in.copy()
+        path.append(process_file + "_" + str(i + 1) + ".csv")
+        fields, contents = csvManager.read(csvManager.get_path(path))
 
         for row in contents:
             disp.loading(".")
             if (row[fields.index("id")] not in unique) and (len(row) == len(fields)):
                 unique.append(row[fields.index("id")])
                 row.append(req.getWebsiteHtml(row[fields.index("link")]))
-                writeBuffer.append(row)
+                write_buffer.append(row)
 
-        diffTime = round(time.time() - startTime, 2)
-        print(" " + str(diffTime))
-        totalTime += diffTime
+        diff_time = round(time.time() - start_time, 2)
+        print(" " + str(diff_time))
+        total_time += diff_time
 
     print(
         "\n[GIT] \tProcessing "
-        + processFile
+        + process_file
         + " took in total "
-        + str(round(totalTime, 2))
+        + str(round(total_time, 2))
         + "s ("
-        + str(len(writeBuffer))
+        + str(len(write_buffer))
         + ")"
     )
-    pathOut.append("merge_" + processFile)
+    path_out.append("merge_" + process_file)
     fields.append("html")
-    csvManager.save(csvManager.getPath(pathOut), fields, writeBuffer)
+    csvManager.save(csvManager.get_path(path_out), fields, write_buffer)
 
 
-def filterSort(file, columns, filters, mergeTableColumns):
+def filter_sort(file, columns, filters, merge_table_columns):
     # filter the merge github file and sort
-    fields, contents = csvManager.read(csvManager.getPath([c.OUTPUT_FILES, file]))
+    fields, contents = csvManager.read(csvManager.get_path([c.OUTPUT_FILES, file]))
     fields[fields.index("id")] = "issueKey"
-    writeBuffer = []
-    outFile = file.replace(".", "")
-    outFile = outFile.replace("-", "")
-    # sql.save(outFile, mergeTableColumns, fields, contents)
+    write_buffer = []
+    out_file = file.replace(".", "")
+    out_file = out_file.replace("-", "")
+    # sql.save(out_file, merge_table_columns, fields, contents)
 
     for row in contents:
         html = row[fields.index("html")]
@@ -86,18 +86,18 @@ def filterSort(file, columns, filters, mergeTableColumns):
             date = search.extractElement('"', date, "T")
 
             for f in files:
-                rowBuffer = []
+                row_buffer = []
                 fl = f.split(":")
-                rowBuffer.append(fl[0])
-                rowBuffer.append(fl[-1])
-                rowBuffer.append(row[fields.index("link")])
-                rowBuffer.append(date)
-                rowBuffer.append(security)
+                row_buffer.append(fl[0])
+                row_buffer.append(fl[-1])
+                row_buffer.append(row[fields.index("link")])
+                row_buffer.append(date)
+                row_buffer.append(security)
 
-                writeBuffer.append(rowBuffer)
+                write_buffer.append(row_buffer)
 
-    outFile = outFile.replace("merge_", "out_")
-    pathOut = [c.OUTPUT_FILES, outFile]
-    csvManager.save(csvManager.getPath(pathOut), columns, writeBuffer)
+    out_file = out_file.replace("merge_", "out_")
+    path_out = [c.OUTPUT_FILES, out_file]
+    csvManager.save(csvManager.get_path(path_out), columns, write_buffer)
 
-    return outFile, writeBuffer
+    return out_file, write_buffer

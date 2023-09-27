@@ -6,14 +6,14 @@ import time
 import config as conf
 
 
-def getPath(components):
+def get_path(components):
     # get the absolute path of a file
     path = os.path.join(os.getcwd(), *components)
 
     return path if (".csv" in path) else path + ".csv"
 
 
-def increaseSizeLimit():
+def increase_size_limit():
     # increase the size because an error pops up when one field is longer than his size
     csv.field_size_limit(sys.maxsize)
 
