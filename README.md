@@ -1,4 +1,4 @@
-# CRIM Security Extractor
+# Security Extractor Extractor Java
 
 `random-system` : name of a random system used for the README
 
