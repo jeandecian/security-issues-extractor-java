@@ -82,7 +82,7 @@ def filter_sort(file, columns, filters, merge_table_columns):
         files = search.handleExtraction(html, "()", ".java:")
 
         if files:
-            date = search.extractElement("relative-time", html, "/relative-time")
+            date = search.extractElement("<relative-time", html, "/relative-time")
             date = search.extractElement('"', date, "T")
 
             for f in files:
