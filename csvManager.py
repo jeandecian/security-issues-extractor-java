@@ -15,7 +15,14 @@ def get_path(components):
 
 def increase_size_limit():
     # increase the size because an error pops up when one field is longer than his size
-    csv.field_size_limit(sys.maxsize)
+    max_int = sys.maxsize
+
+    while True:
+        try:
+            csv.field_size_limit(max_int)
+            break
+        except OverflowError:
+            max_int = int(max_int / 10)
 
 
 def read(file):
